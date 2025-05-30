@@ -16,3 +16,6 @@ go build .
 cd ..
 
 ./solana-anchor-go/solana-anchor-go -dst pump -src pump-fun.json
+
+rm -rf pump-fun.json
+rm -rf solana-anchor-go
