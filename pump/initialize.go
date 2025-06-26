@@ -11,7 +11,7 @@ import (
 )
 
 // Creates the global state.
-type Initialize struct {
+type InitializeInstruction struct {
 
 	// [0] = [WRITE] global
 	//
@@ -21,9 +21,9 @@ type Initialize struct {
 	ag_solanago.AccountMetaSlice `bin:"-"`
 }
 
-// NewInitializeInstructionBuilder creates a new `Initialize` instruction builder.
-func NewInitializeInstructionBuilder() *Initialize {
-	nd := &Initialize{
+// NewInitializeInstructionBuilder creates a new `InitializeInstruction` instruction builder.
+func NewInitializeInstructionBuilder() *InitializeInstruction {
+	nd := &InitializeInstruction{
 		AccountMetaSlice: make(ag_solanago.AccountMetaSlice, 3),
 	}
 	nd.AccountMetaSlice[2] = ag_solanago.Meta(Addresses["11111111111111111111111111111111"])
@@ -31,12 +31,12 @@ func NewInitializeInstructionBuilder() *Initialize {
 }
 
 // SetGlobalAccount sets the "global" account.
-func (inst *Initialize) SetGlobalAccount(global ag_solanago.PublicKey) *Initialize {
+func (inst *InitializeInstruction) SetGlobalAccount(global ag_solanago.PublicKey) *InitializeInstruction {
 	inst.AccountMetaSlice[0] = ag_solanago.Meta(global).WRITE()
 	return inst
 }
 
-func (inst *Initialize) findFindGlobalAddress(knownBumpSeed uint8) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
+func (inst *InitializeInstruction) findFindGlobalAddress(knownBumpSeed uint8) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
 	var seeds [][]byte
 	// const: global
 	seeds = append(seeds, []byte{byte(0x67), byte(0x6c), byte(0x6f), byte(0x62), byte(0x61), byte(0x6c)})
@@ -51,12 +51,12 @@ func (inst *Initialize) findFindGlobalAddress(knownBumpSeed uint8) (pda ag_solan
 }
 
 // FindGlobalAddressWithBumpSeed calculates Global account address with given seeds and a known bump seed.
-func (inst *Initialize) FindGlobalAddressWithBumpSeed(bumpSeed uint8) (pda ag_solanago.PublicKey, err error) {
+func (inst *InitializeInstruction) FindGlobalAddressWithBumpSeed(bumpSeed uint8) (pda ag_solanago.PublicKey, err error) {
 	pda, _, err = inst.findFindGlobalAddress(bumpSeed)
 	return
 }
 
-func (inst *Initialize) MustFindGlobalAddressWithBumpSeed(bumpSeed uint8) (pda ag_solanago.PublicKey) {
+func (inst *InitializeInstruction) MustFindGlobalAddressWithBumpSeed(bumpSeed uint8) (pda ag_solanago.PublicKey) {
 	pda, _, err := inst.findFindGlobalAddress(bumpSeed)
 	if err != nil {
 		panic(err)
@@ -65,12 +65,12 @@ func (inst *Initialize) MustFindGlobalAddressWithBumpSeed(bumpSeed uint8) (pda a
 }
 
 // FindGlobalAddress finds Global account address with given seeds.
-func (inst *Initialize) FindGlobalAddress() (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
+func (inst *InitializeInstruction) FindGlobalAddress() (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
 	pda, bumpSeed, err = inst.findFindGlobalAddress(0)
 	return
 }
 
-func (inst *Initialize) MustFindGlobalAddress() (pda ag_solanago.PublicKey) {
+func (inst *InitializeInstruction) MustFindGlobalAddress() (pda ag_solanago.PublicKey) {
 	pda, _, err := inst.findFindGlobalAddress(0)
 	if err != nil {
 		panic(err)
@@ -79,33 +79,33 @@ func (inst *Initialize) MustFindGlobalAddress() (pda ag_solanago.PublicKey) {
 }
 
 // GetGlobalAccount gets the "global" account.
-func (inst *Initialize) GetGlobalAccount() *ag_solanago.AccountMeta {
+func (inst *InitializeInstruction) GetGlobalAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(0)
 }
 
 // SetUserAccount sets the "user" account.
-func (inst *Initialize) SetUserAccount(user ag_solanago.PublicKey) *Initialize {
+func (inst *InitializeInstruction) SetUserAccount(user ag_solanago.PublicKey) *InitializeInstruction {
 	inst.AccountMetaSlice[1] = ag_solanago.Meta(user).WRITE().SIGNER()
 	return inst
 }
 
 // GetUserAccount gets the "user" account.
-func (inst *Initialize) GetUserAccount() *ag_solanago.AccountMeta {
+func (inst *InitializeInstruction) GetUserAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(1)
 }
 
 // SetSystemProgramAccount sets the "system_program" account.
-func (inst *Initialize) SetSystemProgramAccount(systemProgram ag_solanago.PublicKey) *Initialize {
+func (inst *InitializeInstruction) SetSystemProgramAccount(systemProgram ag_solanago.PublicKey) *InitializeInstruction {
 	inst.AccountMetaSlice[2] = ag_solanago.Meta(systemProgram)
 	return inst
 }
 
 // GetSystemProgramAccount gets the "system_program" account.
-func (inst *Initialize) GetSystemProgramAccount() *ag_solanago.AccountMeta {
+func (inst *InitializeInstruction) GetSystemProgramAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(2)
 }
 
-func (inst Initialize) Build() *Instruction {
+func (inst InitializeInstruction) Build() *Instruction {
 	return &Instruction{BaseVariant: ag_binary.BaseVariant{
 		Impl:   inst,
 		TypeID: Instruction_Initialize,
@@ -115,14 +115,14 @@ func (inst Initialize) Build() *Instruction {
 // ValidateAndBuild validates the instruction parameters and accounts;
 // if there is a validation error, it returns the error.
 // Otherwise, it builds and returns the instruction.
-func (inst Initialize) ValidateAndBuild() (*Instruction, error) {
+func (inst InitializeInstruction) ValidateAndBuild() (*Instruction, error) {
 	if err := inst.Validate(); err != nil {
 		return nil, err
 	}
 	return inst.Build(), nil
 }
 
-func (inst *Initialize) Validate() error {
+func (inst *InitializeInstruction) Validate() error {
 	// Check whether all (required) accounts are set:
 	{
 		if inst.AccountMetaSlice[0] == nil {
@@ -138,7 +138,7 @@ func (inst *Initialize) Validate() error {
 	return nil
 }
 
-func (inst *Initialize) EncodeToTree(parent ag_treeout.Branches) {
+func (inst *InitializeInstruction) EncodeToTree(parent ag_treeout.Branches) {
 	parent.Child(ag_format.Program(ProgramName, ProgramID)).
 		//
 		ParentFunc(func(programBranch ag_treeout.Branches) {
@@ -159,10 +159,10 @@ func (inst *Initialize) EncodeToTree(parent ag_treeout.Branches) {
 		})
 }
 
-func (obj Initialize) MarshalWithEncoder(encoder *ag_binary.Encoder) (err error) {
+func (obj InitializeInstruction) MarshalWithEncoder(encoder *ag_binary.Encoder) (err error) {
 	return nil
 }
-func (obj *Initialize) UnmarshalWithDecoder(decoder *ag_binary.Decoder) (err error) {
+func (obj *InitializeInstruction) UnmarshalWithDecoder(decoder *ag_binary.Decoder) (err error) {
 	return nil
 }
 
@@ -171,7 +171,7 @@ func NewInitializeInstruction(
 	// Accounts:
 	global ag_solanago.PublicKey,
 	user ag_solanago.PublicKey,
-	systemProgram ag_solanago.PublicKey) *Initialize {
+	systemProgram ag_solanago.PublicKey) *InitializeInstruction {
 	return NewInitializeInstructionBuilder().
 		SetGlobalAccount(global).
 		SetUserAccount(user).

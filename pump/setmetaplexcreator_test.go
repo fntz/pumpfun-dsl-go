@@ -10,18 +10,18 @@ import (
 	"testing"
 )
 
-func TestEncodeDecode_Withdraw(t *testing.T) {
+func TestEncodeDecode_SetMetaplexCreator(t *testing.T) {
 	fu := ag_gofuzz.New().NilChance(0)
 	for i := 0; i < 1; i++ {
-		t.Run("Withdraw"+strconv.Itoa(i), func(t *testing.T) {
+		t.Run("SetMetaplexCreator"+strconv.Itoa(i), func(t *testing.T) {
 			{
-				params := new(Withdraw)
+				params := new(SetMetaplexCreatorInstruction)
 				fu.Fuzz(params)
 				params.AccountMetaSlice = nil
 				buf := new(bytes.Buffer)
 				err := encodeT(*params, buf)
 				ag_require.NoError(t, err)
-				got := new(Withdraw)
+				got := new(SetMetaplexCreatorInstruction)
 				err = decodeT(got, buf.Bytes())
 				got.AccountMetaSlice = nil
 				ag_require.NoError(t, err)

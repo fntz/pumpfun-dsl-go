@@ -15,6 +15,7 @@ type BondingCurveAccount struct {
 	RealSolReserves      uint64
 	TokenTotalSupply     uint64
 	Complete             bool
+	Creator              ag_solanago.PublicKey
 }
 
 var BondingCurveAccountDiscriminator = [8]byte{23, 183, 248, 55, 96, 216, 172, 96}
@@ -52,6 +53,11 @@ func (obj BondingCurveAccount) MarshalWithEncoder(encoder *ag_binary.Encoder) (e
 	}
 	// Serialize `Complete` param:
 	err = encoder.Encode(obj.Complete)
+	if err != nil {
+		return err
+	}
+	// Serialize `Creator` param:
+	err = encoder.Encode(obj.Creator)
 	if err != nil {
 		return err
 	}
@@ -102,10 +108,16 @@ func (obj *BondingCurveAccount) UnmarshalWithDecoder(decoder *ag_binary.Decoder)
 	if err != nil {
 		return err
 	}
+	// Deserialize `Creator`:
+	err = decoder.Decode(&obj.Creator)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 type GlobalAccount struct {
+	// Unused
 	Initialized                 bool
 	Authority                   ag_solanago.PublicKey
 	FeeRecipient                ag_solanago.PublicKey
@@ -114,6 +126,14 @@ type GlobalAccount struct {
 	InitialRealTokenReserves    uint64
 	TokenTotalSupply            uint64
 	FeeBasisPoints              uint64
+	WithdrawAuthority           ag_solanago.PublicKey
+
+	// Unused
+	EnableMigrate         bool
+	PoolMigrationFee      uint64
+	CreatorFeeBasisPoints uint64
+	FeeRecipients         [7]ag_solanago.PublicKey
+	SetCreatorAuthority   ag_solanago.PublicKey
 }
 
 var GlobalAccountDiscriminator = [8]byte{167, 232, 232, 177, 200, 108, 114, 127}
@@ -161,6 +181,36 @@ func (obj GlobalAccount) MarshalWithEncoder(encoder *ag_binary.Encoder) (err err
 	}
 	// Serialize `FeeBasisPoints` param:
 	err = encoder.Encode(obj.FeeBasisPoints)
+	if err != nil {
+		return err
+	}
+	// Serialize `WithdrawAuthority` param:
+	err = encoder.Encode(obj.WithdrawAuthority)
+	if err != nil {
+		return err
+	}
+	// Serialize `EnableMigrate` param:
+	err = encoder.Encode(obj.EnableMigrate)
+	if err != nil {
+		return err
+	}
+	// Serialize `PoolMigrationFee` param:
+	err = encoder.Encode(obj.PoolMigrationFee)
+	if err != nil {
+		return err
+	}
+	// Serialize `CreatorFeeBasisPoints` param:
+	err = encoder.Encode(obj.CreatorFeeBasisPoints)
+	if err != nil {
+		return err
+	}
+	// Serialize `FeeRecipients` param:
+	err = encoder.Encode(obj.FeeRecipients)
+	if err != nil {
+		return err
+	}
+	// Serialize `SetCreatorAuthority` param:
+	err = encoder.Encode(obj.SetCreatorAuthority)
 	if err != nil {
 		return err
 	}
@@ -218,6 +268,36 @@ func (obj *GlobalAccount) UnmarshalWithDecoder(decoder *ag_binary.Decoder) (err 
 	}
 	// Deserialize `FeeBasisPoints`:
 	err = decoder.Decode(&obj.FeeBasisPoints)
+	if err != nil {
+		return err
+	}
+	// Deserialize `WithdrawAuthority`:
+	err = decoder.Decode(&obj.WithdrawAuthority)
+	if err != nil {
+		return err
+	}
+	// Deserialize `EnableMigrate`:
+	err = decoder.Decode(&obj.EnableMigrate)
+	if err != nil {
+		return err
+	}
+	// Deserialize `PoolMigrationFee`:
+	err = decoder.Decode(&obj.PoolMigrationFee)
+	if err != nil {
+		return err
+	}
+	// Deserialize `CreatorFeeBasisPoints`:
+	err = decoder.Decode(&obj.CreatorFeeBasisPoints)
+	if err != nil {
+		return err
+	}
+	// Deserialize `FeeRecipients`:
+	err = decoder.Decode(&obj.FeeRecipients)
+	if err != nil {
+		return err
+	}
+	// Deserialize `SetCreatorAuthority`:
+	err = decoder.Decode(&obj.SetCreatorAuthority)
 	if err != nil {
 		return err
 	}

@@ -15,13 +15,13 @@ func TestEncodeDecode_Buy(t *testing.T) {
 	for i := 0; i < 1; i++ {
 		t.Run("Buy"+strconv.Itoa(i), func(t *testing.T) {
 			{
-				params := new(Buy)
+				params := new(BuyInstruction)
 				fu.Fuzz(params)
 				params.AccountMetaSlice = nil
 				buf := new(bytes.Buffer)
 				err := encodeT(*params, buf)
 				ag_require.NoError(t, err)
-				got := new(Buy)
+				got := new(BuyInstruction)
 				err = decodeT(got, buf.Bytes())
 				got.AccountMetaSlice = nil
 				ag_require.NoError(t, err)

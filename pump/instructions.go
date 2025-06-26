@@ -28,40 +28,64 @@ func init() {
 }
 
 var (
-	// Creates the global state.
-	Instruction_Initialize = ag_binary.TypeID([8]byte{175, 175, 109, 31, 13, 152, 155, 237})
+	// Buys tokens from a bonding curve.
+	Instruction_Buy = ag_binary.TypeID([8]byte{102, 6, 61, 18, 1, 218, 235, 234})
 
-	// Sets the global state parameters.
-	Instruction_SetParams = ag_binary.TypeID([8]byte{165, 31, 134, 53, 189, 180, 130, 255})
+	// Collects creator_fee from creator_vault to the coin creator account
+	Instruction_CollectCreatorFee = ag_binary.TypeID([8]byte{20, 22, 86, 123, 198, 28, 219, 132})
 
 	// Creates a new coin and bonding curve.
 	Instruction_Create = ag_binary.TypeID([8]byte{24, 30, 200, 40, 5, 28, 7, 119})
 
-	// Buys tokens from a bonding curve.
-	Instruction_Buy = ag_binary.TypeID([8]byte{102, 6, 61, 18, 1, 218, 235, 234})
+	// Extends the size of program-owned accounts
+	Instruction_ExtendAccount = ag_binary.TypeID([8]byte{234, 102, 194, 203, 150, 72, 62, 229})
+
+	// Creates the global state.
+	Instruction_Initialize = ag_binary.TypeID([8]byte{175, 175, 109, 31, 13, 152, 155, 237})
+
+	// Migrates liquidity to pump_amm if the bonding curve is complete
+	Instruction_Migrate = ag_binary.TypeID([8]byte{155, 234, 231, 146, 236, 158, 162, 30})
 
 	// Sells tokens into a bonding curve.
 	Instruction_Sell = ag_binary.TypeID([8]byte{51, 230, 133, 164, 1, 127, 131, 173})
 
-	// Allows the admin to withdraw liquidity for a migration once the bonding curve completes
-	Instruction_Withdraw = ag_binary.TypeID([8]byte{183, 18, 70, 156, 148, 109, 161, 34})
+	// Allows Global::set_creator_authority to set the bonding curve creator from Metaplex metadata or input argument
+	Instruction_SetCreator = ag_binary.TypeID([8]byte{254, 148, 255, 112, 207, 142, 170, 165})
+
+	// Syncs the bonding curve creator with the Metaplex metadata creator if it exists
+	Instruction_SetMetaplexCreator = ag_binary.TypeID([8]byte{138, 96, 174, 217, 48, 85, 197, 246})
+
+	// Sets the global state parameters.
+	Instruction_SetParams = ag_binary.TypeID([8]byte{27, 234, 178, 52, 147, 2, 187, 141})
+
+	Instruction_UpdateGlobalAuthority = ag_binary.TypeID([8]byte{227, 181, 74, 196, 208, 21, 97, 213})
 )
 
 // InstructionIDToName returns the name of the instruction given its ID.
 func InstructionIDToName(id ag_binary.TypeID) string {
 	switch id {
-	case Instruction_Initialize:
-		return "Initialize"
-	case Instruction_SetParams:
-		return "SetParams"
-	case Instruction_Create:
-		return "Create"
 	case Instruction_Buy:
 		return "Buy"
+	case Instruction_CollectCreatorFee:
+		return "CollectCreatorFee"
+	case Instruction_Create:
+		return "Create"
+	case Instruction_ExtendAccount:
+		return "ExtendAccount"
+	case Instruction_Initialize:
+		return "Initialize"
+	case Instruction_Migrate:
+		return "Migrate"
 	case Instruction_Sell:
 		return "Sell"
-	case Instruction_Withdraw:
-		return "Withdraw"
+	case Instruction_SetCreator:
+		return "SetCreator"
+	case Instruction_SetMetaplexCreator:
+		return "SetMetaplexCreator"
+	case Instruction_SetParams:
+		return "SetParams"
+	case Instruction_UpdateGlobalAuthority:
+		return "UpdateGlobalAuthority"
 	default:
 		return ""
 	}
@@ -83,22 +107,37 @@ var InstructionImplDef = ag_binary.NewVariantDefinition(
 	ag_binary.AnchorTypeIDEncoding,
 	[]ag_binary.VariantType{
 		{
-			Name: "initialize", Type: (*Initialize)(nil),
+			Name: "buy", Type: (*BuyInstruction)(nil),
 		},
 		{
-			Name: "set_params", Type: (*SetParams)(nil),
+			Name: "collect_creator_fee", Type: (*CollectCreatorFeeInstruction)(nil),
 		},
 		{
-			Name: "create", Type: (*Create)(nil),
+			Name: "create", Type: (*CreateInstruction)(nil),
 		},
 		{
-			Name: "buy", Type: (*Buy)(nil),
+			Name: "extend_account", Type: (*ExtendAccountInstruction)(nil),
 		},
 		{
-			Name: "sell", Type: (*Sell)(nil),
+			Name: "initialize", Type: (*InitializeInstruction)(nil),
 		},
 		{
-			Name: "withdraw", Type: (*Withdraw)(nil),
+			Name: "migrate", Type: (*MigrateInstruction)(nil),
+		},
+		{
+			Name: "sell", Type: (*SellInstruction)(nil),
+		},
+		{
+			Name: "set_creator", Type: (*SetCreatorInstruction)(nil),
+		},
+		{
+			Name: "set_metaplex_creator", Type: (*SetMetaplexCreatorInstruction)(nil),
+		},
+		{
+			Name: "set_params", Type: (*SetParamsInstruction)(nil),
+		},
+		{
+			Name: "update_global_authority", Type: (*UpdateGlobalAuthorityInstruction)(nil),
 		},
 	},
 )

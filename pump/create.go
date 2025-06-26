@@ -11,7 +11,7 @@ import (
 )
 
 // Creates a new coin and bonding curve.
-type Create struct {
+type CreateInstruction struct {
 	Name    *string
 	Symbol  *string
 	Uri     *string
@@ -31,7 +31,7 @@ type Create struct {
 	//
 	// [6] = [WRITE] metadata
 	//
-	// [7] = [] user
+	// [7] = [WRITE, SIGNER] user
 	//
 	// [8] = [] system_program
 	//
@@ -47,9 +47,9 @@ type Create struct {
 	ag_solanago.AccountMetaSlice `bin:"-"`
 }
 
-// NewCreateInstructionBuilder creates a new `Create` instruction builder.
-func NewCreateInstructionBuilder() *Create {
-	nd := &Create{
+// NewCreateInstructionBuilder creates a new `CreateInstruction` instruction builder.
+func NewCreateInstructionBuilder() *CreateInstruction {
+	nd := &CreateInstruction{
 		AccountMetaSlice: make(ag_solanago.AccountMetaSlice, 14),
 	}
 	nd.AccountMetaSlice[5] = ag_solanago.Meta(Addresses["metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"])
@@ -57,53 +57,51 @@ func NewCreateInstructionBuilder() *Create {
 	nd.AccountMetaSlice[9] = ag_solanago.Meta(Addresses["TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"])
 	nd.AccountMetaSlice[10] = ag_solanago.Meta(Addresses["ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"])
 	nd.AccountMetaSlice[11] = ag_solanago.Meta(Addresses["SysvarRent111111111111111111111111111111111"])
-	nd.AccountMetaSlice[12] = ag_solanago.Meta(Addresses["Ce6TQqeHC9p8KetsN6JsjHK7UTZk7nasjjnr7XxXp9F1"])
-	nd.AccountMetaSlice[13] = ag_solanago.Meta(Addresses["6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P"])
 	return nd
 }
 
 // SetName sets the "name" parameter.
-func (inst *Create) SetName(name string) *Create {
+func (inst *CreateInstruction) SetName(name string) *CreateInstruction {
 	inst.Name = &name
 	return inst
 }
 
 // SetSymbol sets the "symbol" parameter.
-func (inst *Create) SetSymbol(symbol string) *Create {
+func (inst *CreateInstruction) SetSymbol(symbol string) *CreateInstruction {
 	inst.Symbol = &symbol
 	return inst
 }
 
 // SetUri sets the "uri" parameter.
-func (inst *Create) SetUri(uri string) *Create {
+func (inst *CreateInstruction) SetUri(uri string) *CreateInstruction {
 	inst.Uri = &uri
 	return inst
 }
 
 // SetCreator sets the "creator" parameter.
-func (inst *Create) SetCreator(creator ag_solanago.PublicKey) *Create {
+func (inst *CreateInstruction) SetCreator(creator ag_solanago.PublicKey) *CreateInstruction {
 	inst.Creator = &creator
 	return inst
 }
 
 // SetMintAccount sets the "mint" account.
-func (inst *Create) SetMintAccount(mint ag_solanago.PublicKey) *Create {
+func (inst *CreateInstruction) SetMintAccount(mint ag_solanago.PublicKey) *CreateInstruction {
 	inst.AccountMetaSlice[0] = ag_solanago.Meta(mint).WRITE().SIGNER()
 	return inst
 }
 
 // GetMintAccount gets the "mint" account.
-func (inst *Create) GetMintAccount() *ag_solanago.AccountMeta {
+func (inst *CreateInstruction) GetMintAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(0)
 }
 
 // SetMintAuthorityAccount sets the "mint_authority" account.
-func (inst *Create) SetMintAuthorityAccount(mintAuthority ag_solanago.PublicKey) *Create {
+func (inst *CreateInstruction) SetMintAuthorityAccount(mintAuthority ag_solanago.PublicKey) *CreateInstruction {
 	inst.AccountMetaSlice[1] = ag_solanago.Meta(mintAuthority)
 	return inst
 }
 
-func (inst *Create) findFindMintAuthorityAddress(knownBumpSeed uint8) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
+func (inst *CreateInstruction) findFindMintAuthorityAddress(knownBumpSeed uint8) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
 	var seeds [][]byte
 	// const: mint-authority
 	seeds = append(seeds, []byte{byte(0x6d), byte(0x69), byte(0x6e), byte(0x74), byte(0x2d), byte(0x61), byte(0x75), byte(0x74), byte(0x68), byte(0x6f), byte(0x72), byte(0x69), byte(0x74), byte(0x79)})
@@ -118,12 +116,12 @@ func (inst *Create) findFindMintAuthorityAddress(knownBumpSeed uint8) (pda ag_so
 }
 
 // FindMintAuthorityAddressWithBumpSeed calculates MintAuthority account address with given seeds and a known bump seed.
-func (inst *Create) FindMintAuthorityAddressWithBumpSeed(bumpSeed uint8) (pda ag_solanago.PublicKey, err error) {
+func (inst *CreateInstruction) FindMintAuthorityAddressWithBumpSeed(bumpSeed uint8) (pda ag_solanago.PublicKey, err error) {
 	pda, _, err = inst.findFindMintAuthorityAddress(bumpSeed)
 	return
 }
 
-func (inst *Create) MustFindMintAuthorityAddressWithBumpSeed(bumpSeed uint8) (pda ag_solanago.PublicKey) {
+func (inst *CreateInstruction) MustFindMintAuthorityAddressWithBumpSeed(bumpSeed uint8) (pda ag_solanago.PublicKey) {
 	pda, _, err := inst.findFindMintAuthorityAddress(bumpSeed)
 	if err != nil {
 		panic(err)
@@ -132,12 +130,12 @@ func (inst *Create) MustFindMintAuthorityAddressWithBumpSeed(bumpSeed uint8) (pd
 }
 
 // FindMintAuthorityAddress finds MintAuthority account address with given seeds.
-func (inst *Create) FindMintAuthorityAddress() (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
+func (inst *CreateInstruction) FindMintAuthorityAddress() (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
 	pda, bumpSeed, err = inst.findFindMintAuthorityAddress(0)
 	return
 }
 
-func (inst *Create) MustFindMintAuthorityAddress() (pda ag_solanago.PublicKey) {
+func (inst *CreateInstruction) MustFindMintAuthorityAddress() (pda ag_solanago.PublicKey) {
 	pda, _, err := inst.findFindMintAuthorityAddress(0)
 	if err != nil {
 		panic(err)
@@ -146,17 +144,17 @@ func (inst *Create) MustFindMintAuthorityAddress() (pda ag_solanago.PublicKey) {
 }
 
 // GetMintAuthorityAccount gets the "mint_authority" account.
-func (inst *Create) GetMintAuthorityAccount() *ag_solanago.AccountMeta {
+func (inst *CreateInstruction) GetMintAuthorityAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(1)
 }
 
 // SetBondingCurveAccount sets the "bonding_curve" account.
-func (inst *Create) SetBondingCurveAccount(bondingCurve ag_solanago.PublicKey) *Create {
+func (inst *CreateInstruction) SetBondingCurveAccount(bondingCurve ag_solanago.PublicKey) *CreateInstruction {
 	inst.AccountMetaSlice[2] = ag_solanago.Meta(bondingCurve).WRITE()
 	return inst
 }
 
-func (inst *Create) findFindBondingCurveAddress(mint ag_solanago.PublicKey, knownBumpSeed uint8) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
+func (inst *CreateInstruction) findFindBondingCurveAddress(mint ag_solanago.PublicKey, knownBumpSeed uint8) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
 	var seeds [][]byte
 	// const: bonding-curve
 	seeds = append(seeds, []byte{byte(0x62), byte(0x6f), byte(0x6e), byte(0x64), byte(0x69), byte(0x6e), byte(0x67), byte(0x2d), byte(0x63), byte(0x75), byte(0x72), byte(0x76), byte(0x65)})
@@ -173,12 +171,12 @@ func (inst *Create) findFindBondingCurveAddress(mint ag_solanago.PublicKey, know
 }
 
 // FindBondingCurveAddressWithBumpSeed calculates BondingCurve account address with given seeds and a known bump seed.
-func (inst *Create) FindBondingCurveAddressWithBumpSeed(mint ag_solanago.PublicKey, bumpSeed uint8) (pda ag_solanago.PublicKey, err error) {
+func (inst *CreateInstruction) FindBondingCurveAddressWithBumpSeed(mint ag_solanago.PublicKey, bumpSeed uint8) (pda ag_solanago.PublicKey, err error) {
 	pda, _, err = inst.findFindBondingCurveAddress(mint, bumpSeed)
 	return
 }
 
-func (inst *Create) MustFindBondingCurveAddressWithBumpSeed(mint ag_solanago.PublicKey, bumpSeed uint8) (pda ag_solanago.PublicKey) {
+func (inst *CreateInstruction) MustFindBondingCurveAddressWithBumpSeed(mint ag_solanago.PublicKey, bumpSeed uint8) (pda ag_solanago.PublicKey) {
 	pda, _, err := inst.findFindBondingCurveAddress(mint, bumpSeed)
 	if err != nil {
 		panic(err)
@@ -187,12 +185,12 @@ func (inst *Create) MustFindBondingCurveAddressWithBumpSeed(mint ag_solanago.Pub
 }
 
 // FindBondingCurveAddress finds BondingCurve account address with given seeds.
-func (inst *Create) FindBondingCurveAddress(mint ag_solanago.PublicKey) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
+func (inst *CreateInstruction) FindBondingCurveAddress(mint ag_solanago.PublicKey) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
 	pda, bumpSeed, err = inst.findFindBondingCurveAddress(mint, 0)
 	return
 }
 
-func (inst *Create) MustFindBondingCurveAddress(mint ag_solanago.PublicKey) (pda ag_solanago.PublicKey) {
+func (inst *CreateInstruction) MustFindBondingCurveAddress(mint ag_solanago.PublicKey) (pda ag_solanago.PublicKey) {
 	pda, _, err := inst.findFindBondingCurveAddress(mint, 0)
 	if err != nil {
 		panic(err)
@@ -201,28 +199,76 @@ func (inst *Create) MustFindBondingCurveAddress(mint ag_solanago.PublicKey) (pda
 }
 
 // GetBondingCurveAccount gets the "bonding_curve" account.
-func (inst *Create) GetBondingCurveAccount() *ag_solanago.AccountMeta {
+func (inst *CreateInstruction) GetBondingCurveAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(2)
 }
 
 // SetAssociatedBondingCurveAccount sets the "associated_bonding_curve" account.
-func (inst *Create) SetAssociatedBondingCurveAccount(associatedBondingCurve ag_solanago.PublicKey) *Create {
+func (inst *CreateInstruction) SetAssociatedBondingCurveAccount(associatedBondingCurve ag_solanago.PublicKey) *CreateInstruction {
 	inst.AccountMetaSlice[3] = ag_solanago.Meta(associatedBondingCurve).WRITE()
 	return inst
 }
 
+func (inst *CreateInstruction) findFindAssociatedBondingCurveAddress(bondingCurve ag_solanago.PublicKey, mint ag_solanago.PublicKey, knownBumpSeed uint8) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
+	var seeds [][]byte
+	// path: bondingCurve
+	seeds = append(seeds, bondingCurve.Bytes())
+	// const (raw): [6 221 246 225 215 101 161 147 217 203 225 70 206 235 121 172 28 180 133 237 95 91 55 145 58 140 245 133 126 255 0 169]
+	seeds = append(seeds, []byte{byte(0x6), byte(0xdd), byte(0xf6), byte(0xe1), byte(0xd7), byte(0x65), byte(0xa1), byte(0x93), byte(0xd9), byte(0xcb), byte(0xe1), byte(0x46), byte(0xce), byte(0xeb), byte(0x79), byte(0xac), byte(0x1c), byte(0xb4), byte(0x85), byte(0xed), byte(0x5f), byte(0x5b), byte(0x37), byte(0x91), byte(0x3a), byte(0x8c), byte(0xf5), byte(0x85), byte(0x7e), byte(0xff), byte(0x0), byte(0xa9)})
+	// path: mint
+	seeds = append(seeds, mint.Bytes())
+
+	programID := Addresses["ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"]
+
+	if knownBumpSeed != 0 {
+		seeds = append(seeds, []byte{byte(bumpSeed)})
+		pda, err = ag_solanago.CreateProgramAddress(seeds, programID)
+	} else {
+		pda, bumpSeed, err = ag_solanago.FindProgramAddress(seeds, programID)
+	}
+	return
+}
+
+// FindAssociatedBondingCurveAddressWithBumpSeed calculates AssociatedBondingCurve account address with given seeds and a known bump seed.
+func (inst *CreateInstruction) FindAssociatedBondingCurveAddressWithBumpSeed(bondingCurve ag_solanago.PublicKey, mint ag_solanago.PublicKey, bumpSeed uint8) (pda ag_solanago.PublicKey, err error) {
+	pda, _, err = inst.findFindAssociatedBondingCurveAddress(bondingCurve, mint, bumpSeed)
+	return
+}
+
+func (inst *CreateInstruction) MustFindAssociatedBondingCurveAddressWithBumpSeed(bondingCurve ag_solanago.PublicKey, mint ag_solanago.PublicKey, bumpSeed uint8) (pda ag_solanago.PublicKey) {
+	pda, _, err := inst.findFindAssociatedBondingCurveAddress(bondingCurve, mint, bumpSeed)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+// FindAssociatedBondingCurveAddress finds AssociatedBondingCurve account address with given seeds.
+func (inst *CreateInstruction) FindAssociatedBondingCurveAddress(bondingCurve ag_solanago.PublicKey, mint ag_solanago.PublicKey) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
+	pda, bumpSeed, err = inst.findFindAssociatedBondingCurveAddress(bondingCurve, mint, 0)
+	return
+}
+
+func (inst *CreateInstruction) MustFindAssociatedBondingCurveAddress(bondingCurve ag_solanago.PublicKey, mint ag_solanago.PublicKey) (pda ag_solanago.PublicKey) {
+	pda, _, err := inst.findFindAssociatedBondingCurveAddress(bondingCurve, mint, 0)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
 // GetAssociatedBondingCurveAccount gets the "associated_bonding_curve" account.
-func (inst *Create) GetAssociatedBondingCurveAccount() *ag_solanago.AccountMeta {
+func (inst *CreateInstruction) GetAssociatedBondingCurveAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(3)
 }
 
 // SetGlobalAccount sets the "global" account.
-func (inst *Create) SetGlobalAccount(global ag_solanago.PublicKey) *Create {
+func (inst *CreateInstruction) SetGlobalAccount(global ag_solanago.PublicKey) *CreateInstruction {
 	inst.AccountMetaSlice[4] = ag_solanago.Meta(global)
 	return inst
 }
 
-func (inst *Create) findFindGlobalAddress(knownBumpSeed uint8) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
+func (inst *CreateInstruction) findFindGlobalAddress(knownBumpSeed uint8) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
 	var seeds [][]byte
 	// const: global
 	seeds = append(seeds, []byte{byte(0x67), byte(0x6c), byte(0x6f), byte(0x62), byte(0x61), byte(0x6c)})
@@ -237,12 +283,12 @@ func (inst *Create) findFindGlobalAddress(knownBumpSeed uint8) (pda ag_solanago.
 }
 
 // FindGlobalAddressWithBumpSeed calculates Global account address with given seeds and a known bump seed.
-func (inst *Create) FindGlobalAddressWithBumpSeed(bumpSeed uint8) (pda ag_solanago.PublicKey, err error) {
+func (inst *CreateInstruction) FindGlobalAddressWithBumpSeed(bumpSeed uint8) (pda ag_solanago.PublicKey, err error) {
 	pda, _, err = inst.findFindGlobalAddress(bumpSeed)
 	return
 }
 
-func (inst *Create) MustFindGlobalAddressWithBumpSeed(bumpSeed uint8) (pda ag_solanago.PublicKey) {
+func (inst *CreateInstruction) MustFindGlobalAddressWithBumpSeed(bumpSeed uint8) (pda ag_solanago.PublicKey) {
 	pda, _, err := inst.findFindGlobalAddress(bumpSeed)
 	if err != nil {
 		panic(err)
@@ -251,12 +297,12 @@ func (inst *Create) MustFindGlobalAddressWithBumpSeed(bumpSeed uint8) (pda ag_so
 }
 
 // FindGlobalAddress finds Global account address with given seeds.
-func (inst *Create) FindGlobalAddress() (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
+func (inst *CreateInstruction) FindGlobalAddress() (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
 	pda, bumpSeed, err = inst.findFindGlobalAddress(0)
 	return
 }
 
-func (inst *Create) MustFindGlobalAddress() (pda ag_solanago.PublicKey) {
+func (inst *CreateInstruction) MustFindGlobalAddress() (pda ag_solanago.PublicKey) {
 	pda, _, err := inst.findFindGlobalAddress(0)
 	if err != nil {
 		panic(err)
@@ -265,110 +311,200 @@ func (inst *Create) MustFindGlobalAddress() (pda ag_solanago.PublicKey) {
 }
 
 // GetGlobalAccount gets the "global" account.
-func (inst *Create) GetGlobalAccount() *ag_solanago.AccountMeta {
+func (inst *CreateInstruction) GetGlobalAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(4)
 }
 
 // SetMplTokenMetadataAccount sets the "mpl_token_metadata" account.
-func (inst *Create) SetMplTokenMetadataAccount(mplTokenMetadata ag_solanago.PublicKey) *Create {
+func (inst *CreateInstruction) SetMplTokenMetadataAccount(mplTokenMetadata ag_solanago.PublicKey) *CreateInstruction {
 	inst.AccountMetaSlice[5] = ag_solanago.Meta(mplTokenMetadata)
 	return inst
 }
 
 // GetMplTokenMetadataAccount gets the "mpl_token_metadata" account.
-func (inst *Create) GetMplTokenMetadataAccount() *ag_solanago.AccountMeta {
+func (inst *CreateInstruction) GetMplTokenMetadataAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(5)
 }
 
 // SetMetadataAccount sets the "metadata" account.
-func (inst *Create) SetMetadataAccount(metadata ag_solanago.PublicKey) *Create {
+func (inst *CreateInstruction) SetMetadataAccount(metadata ag_solanago.PublicKey) *CreateInstruction {
 	inst.AccountMetaSlice[6] = ag_solanago.Meta(metadata).WRITE()
 	return inst
 }
 
+func (inst *CreateInstruction) findFindMetadataAddress(mint ag_solanago.PublicKey, knownBumpSeed uint8) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
+	var seeds [][]byte
+	// const: metadata
+	seeds = append(seeds, []byte{byte(0x6d), byte(0x65), byte(0x74), byte(0x61), byte(0x64), byte(0x61), byte(0x74), byte(0x61)})
+	// const (raw): [11 112 101 177 227 209 124 69 56 157 82 127 107 4 195 205 88 184 108 115 26 160 253 181 73 182 209 188 3 248 41 70]
+	seeds = append(seeds, []byte{byte(0xb), byte(0x70), byte(0x65), byte(0xb1), byte(0xe3), byte(0xd1), byte(0x7c), byte(0x45), byte(0x38), byte(0x9d), byte(0x52), byte(0x7f), byte(0x6b), byte(0x4), byte(0xc3), byte(0xcd), byte(0x58), byte(0xb8), byte(0x6c), byte(0x73), byte(0x1a), byte(0xa0), byte(0xfd), byte(0xb5), byte(0x49), byte(0xb6), byte(0xd1), byte(0xbc), byte(0x3), byte(0xf8), byte(0x29), byte(0x46)})
+	// path: mint
+	seeds = append(seeds, mint.Bytes())
+
+	programID := Addresses["11111111111111111111111111111111"]
+
+	if knownBumpSeed != 0 {
+		seeds = append(seeds, []byte{byte(bumpSeed)})
+		pda, err = ag_solanago.CreateProgramAddress(seeds, programID)
+	} else {
+		pda, bumpSeed, err = ag_solanago.FindProgramAddress(seeds, programID)
+	}
+	return
+}
+
+// FindMetadataAddressWithBumpSeed calculates Metadata account address with given seeds and a known bump seed.
+func (inst *CreateInstruction) FindMetadataAddressWithBumpSeed(mint ag_solanago.PublicKey, bumpSeed uint8) (pda ag_solanago.PublicKey, err error) {
+	pda, _, err = inst.findFindMetadataAddress(mint, bumpSeed)
+	return
+}
+
+func (inst *CreateInstruction) MustFindMetadataAddressWithBumpSeed(mint ag_solanago.PublicKey, bumpSeed uint8) (pda ag_solanago.PublicKey) {
+	pda, _, err := inst.findFindMetadataAddress(mint, bumpSeed)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+// FindMetadataAddress finds Metadata account address with given seeds.
+func (inst *CreateInstruction) FindMetadataAddress(mint ag_solanago.PublicKey) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
+	pda, bumpSeed, err = inst.findFindMetadataAddress(mint, 0)
+	return
+}
+
+func (inst *CreateInstruction) MustFindMetadataAddress(mint ag_solanago.PublicKey) (pda ag_solanago.PublicKey) {
+	pda, _, err := inst.findFindMetadataAddress(mint, 0)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
 // GetMetadataAccount gets the "metadata" account.
-func (inst *Create) GetMetadataAccount() *ag_solanago.AccountMeta {
+func (inst *CreateInstruction) GetMetadataAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(6)
 }
 
 // SetUserAccount sets the "user" account.
-func (inst *Create) SetUserAccount(user ag_solanago.PublicKey) *Create {
-	inst.AccountMetaSlice[7] = ag_solanago.Meta(user)
+func (inst *CreateInstruction) SetUserAccount(user ag_solanago.PublicKey) *CreateInstruction {
+	inst.AccountMetaSlice[7] = ag_solanago.Meta(user).WRITE().SIGNER()
 	return inst
 }
 
 // GetUserAccount gets the "user" account.
-func (inst *Create) GetUserAccount() *ag_solanago.AccountMeta {
+func (inst *CreateInstruction) GetUserAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(7)
 }
 
 // SetSystemProgramAccount sets the "system_program" account.
-func (inst *Create) SetSystemProgramAccount(systemProgram ag_solanago.PublicKey) *Create {
+func (inst *CreateInstruction) SetSystemProgramAccount(systemProgram ag_solanago.PublicKey) *CreateInstruction {
 	inst.AccountMetaSlice[8] = ag_solanago.Meta(systemProgram)
 	return inst
 }
 
 // GetSystemProgramAccount gets the "system_program" account.
-func (inst *Create) GetSystemProgramAccount() *ag_solanago.AccountMeta {
+func (inst *CreateInstruction) GetSystemProgramAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(8)
 }
 
 // SetTokenProgramAccount sets the "token_program" account.
-func (inst *Create) SetTokenProgramAccount(tokenProgram ag_solanago.PublicKey) *Create {
+func (inst *CreateInstruction) SetTokenProgramAccount(tokenProgram ag_solanago.PublicKey) *CreateInstruction {
 	inst.AccountMetaSlice[9] = ag_solanago.Meta(tokenProgram)
 	return inst
 }
 
 // GetTokenProgramAccount gets the "token_program" account.
-func (inst *Create) GetTokenProgramAccount() *ag_solanago.AccountMeta {
+func (inst *CreateInstruction) GetTokenProgramAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(9)
 }
 
 // SetAssociatedTokenProgramAccount sets the "associated_token_program" account.
-func (inst *Create) SetAssociatedTokenProgramAccount(associatedTokenProgram ag_solanago.PublicKey) *Create {
+func (inst *CreateInstruction) SetAssociatedTokenProgramAccount(associatedTokenProgram ag_solanago.PublicKey) *CreateInstruction {
 	inst.AccountMetaSlice[10] = ag_solanago.Meta(associatedTokenProgram)
 	return inst
 }
 
 // GetAssociatedTokenProgramAccount gets the "associated_token_program" account.
-func (inst *Create) GetAssociatedTokenProgramAccount() *ag_solanago.AccountMeta {
+func (inst *CreateInstruction) GetAssociatedTokenProgramAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(10)
 }
 
 // SetRentAccount sets the "rent" account.
-func (inst *Create) SetRentAccount(rent ag_solanago.PublicKey) *Create {
+func (inst *CreateInstruction) SetRentAccount(rent ag_solanago.PublicKey) *CreateInstruction {
 	inst.AccountMetaSlice[11] = ag_solanago.Meta(rent)
 	return inst
 }
 
 // GetRentAccount gets the "rent" account.
-func (inst *Create) GetRentAccount() *ag_solanago.AccountMeta {
+func (inst *CreateInstruction) GetRentAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(11)
 }
 
 // SetEventAuthorityAccount sets the "event_authority" account.
-func (inst *Create) SetEventAuthorityAccount(eventAuthority ag_solanago.PublicKey) *Create {
+func (inst *CreateInstruction) SetEventAuthorityAccount(eventAuthority ag_solanago.PublicKey) *CreateInstruction {
 	inst.AccountMetaSlice[12] = ag_solanago.Meta(eventAuthority)
 	return inst
 }
 
+func (inst *CreateInstruction) findFindEventAuthorityAddress(knownBumpSeed uint8) (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
+	var seeds [][]byte
+	// const: __event_authority
+	seeds = append(seeds, []byte{byte(0x5f), byte(0x5f), byte(0x65), byte(0x76), byte(0x65), byte(0x6e), byte(0x74), byte(0x5f), byte(0x61), byte(0x75), byte(0x74), byte(0x68), byte(0x6f), byte(0x72), byte(0x69), byte(0x74), byte(0x79)})
+
+	if knownBumpSeed != 0 {
+		seeds = append(seeds, []byte{byte(bumpSeed)})
+		pda, err = ag_solanago.CreateProgramAddress(seeds, ProgramID)
+	} else {
+		pda, bumpSeed, err = ag_solanago.FindProgramAddress(seeds, ProgramID)
+	}
+	return
+}
+
+// FindEventAuthorityAddressWithBumpSeed calculates EventAuthority account address with given seeds and a known bump seed.
+func (inst *CreateInstruction) FindEventAuthorityAddressWithBumpSeed(bumpSeed uint8) (pda ag_solanago.PublicKey, err error) {
+	pda, _, err = inst.findFindEventAuthorityAddress(bumpSeed)
+	return
+}
+
+func (inst *CreateInstruction) MustFindEventAuthorityAddressWithBumpSeed(bumpSeed uint8) (pda ag_solanago.PublicKey) {
+	pda, _, err := inst.findFindEventAuthorityAddress(bumpSeed)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
+// FindEventAuthorityAddress finds EventAuthority account address with given seeds.
+func (inst *CreateInstruction) FindEventAuthorityAddress() (pda ag_solanago.PublicKey, bumpSeed uint8, err error) {
+	pda, bumpSeed, err = inst.findFindEventAuthorityAddress(0)
+	return
+}
+
+func (inst *CreateInstruction) MustFindEventAuthorityAddress() (pda ag_solanago.PublicKey) {
+	pda, _, err := inst.findFindEventAuthorityAddress(0)
+	if err != nil {
+		panic(err)
+	}
+	return
+}
+
 // GetEventAuthorityAccount gets the "event_authority" account.
-func (inst *Create) GetEventAuthorityAccount() *ag_solanago.AccountMeta {
+func (inst *CreateInstruction) GetEventAuthorityAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(12)
 }
 
 // SetProgramAccount sets the "program" account.
-func (inst *Create) SetProgramAccount(program ag_solanago.PublicKey) *Create {
+func (inst *CreateInstruction) SetProgramAccount(program ag_solanago.PublicKey) *CreateInstruction {
 	inst.AccountMetaSlice[13] = ag_solanago.Meta(program)
 	return inst
 }
 
 // GetProgramAccount gets the "program" account.
-func (inst *Create) GetProgramAccount() *ag_solanago.AccountMeta {
+func (inst *CreateInstruction) GetProgramAccount() *ag_solanago.AccountMeta {
 	return inst.AccountMetaSlice.Get(13)
 }
 
-func (inst Create) Build() *Instruction {
+func (inst CreateInstruction) Build() *Instruction {
 	return &Instruction{BaseVariant: ag_binary.BaseVariant{
 		Impl:   inst,
 		TypeID: Instruction_Create,
@@ -378,14 +514,14 @@ func (inst Create) Build() *Instruction {
 // ValidateAndBuild validates the instruction parameters and accounts;
 // if there is a validation error, it returns the error.
 // Otherwise, it builds and returns the instruction.
-func (inst Create) ValidateAndBuild() (*Instruction, error) {
+func (inst CreateInstruction) ValidateAndBuild() (*Instruction, error) {
 	if err := inst.Validate(); err != nil {
 		return nil, err
 	}
 	return inst.Build(), nil
 }
 
-func (inst *Create) Validate() error {
+func (inst *CreateInstruction) Validate() error {
 	// Check whether all (required) parameters are set:
 	{
 		if inst.Name == nil {
@@ -450,7 +586,7 @@ func (inst *Create) Validate() error {
 	return nil
 }
 
-func (inst *Create) EncodeToTree(parent ag_treeout.Branches) {
+func (inst *CreateInstruction) EncodeToTree(parent ag_treeout.Branches) {
 	parent.Child(ag_format.Program(ProgramName, ProgramID)).
 		//
 		ParentFunc(func(programBranch ag_treeout.Branches) {
@@ -487,7 +623,7 @@ func (inst *Create) EncodeToTree(parent ag_treeout.Branches) {
 		})
 }
 
-func (obj Create) MarshalWithEncoder(encoder *ag_binary.Encoder) (err error) {
+func (obj CreateInstruction) MarshalWithEncoder(encoder *ag_binary.Encoder) (err error) {
 	// Serialize `Name` param:
 	err = encoder.Encode(obj.Name)
 	if err != nil {
@@ -510,7 +646,7 @@ func (obj Create) MarshalWithEncoder(encoder *ag_binary.Encoder) (err error) {
 	}
 	return nil
 }
-func (obj *Create) UnmarshalWithDecoder(decoder *ag_binary.Decoder) (err error) {
+func (obj *CreateInstruction) UnmarshalWithDecoder(decoder *ag_binary.Decoder) (err error) {
 	// Deserialize `Name`:
 	err = decoder.Decode(&obj.Name)
 	if err != nil {
@@ -555,7 +691,7 @@ func NewCreateInstruction(
 	associatedTokenProgram ag_solanago.PublicKey,
 	rent ag_solanago.PublicKey,
 	eventAuthority ag_solanago.PublicKey,
-	program ag_solanago.PublicKey) *Create {
+	program ag_solanago.PublicKey) *CreateInstruction {
 	return NewCreateInstructionBuilder().
 		SetName(name).
 		SetSymbol(symbol).

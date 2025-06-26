@@ -61,6 +61,116 @@ var (
 		msg:  "Withdraw too frequent",
 		name: "WithdrawTooFrequent",
 	}
+	ErrNewSizeShouldBeGreaterThanCurrentSize = &customErrorDef{
+		code: 6009,
+		msg:  "new_size should be > current_size",
+		name: "NewSizeShouldBeGreaterThanCurrentSize",
+	}
+	ErrAccountTypeNotSupported = &customErrorDef{
+		code: 6010,
+		msg:  "Account type not supported",
+		name: "AccountTypeNotSupported",
+	}
+	ErrInitialRealTokenReservesShouldBeLessThanTokenTotalSupply = &customErrorDef{
+		code: 6011,
+		msg:  "initial_real_token_reserves should be less than token_total_supply",
+		name: "InitialRealTokenReservesShouldBeLessThanTokenTotalSupply",
+	}
+	ErrInitialVirtualTokenReservesShouldBeGreaterThanInitialRealTokenReserves = &customErrorDef{
+		code: 6012,
+		msg:  "initial_virtual_token_reserves should be greater than initial_real_token_reserves",
+		name: "InitialVirtualTokenReservesShouldBeGreaterThanInitialRealTokenReserves",
+	}
+	ErrFeeBasisPointsGreaterThanMaximum = &customErrorDef{
+		code: 6013,
+		msg:  "fee_basis_points greater than maximum",
+		name: "FeeBasisPointsGreaterThanMaximum",
+	}
+	ErrAllZerosWithdrawAuthority = &customErrorDef{
+		code: 6014,
+		msg:  "Withdraw authority cannot be set to System Program ID",
+		name: "AllZerosWithdrawAuthority",
+	}
+	ErrPoolMigrationFeeShouldBeLessThanFinalRealSolReserves = &customErrorDef{
+		code: 6015,
+		msg:  "pool_migration_fee should be less than final_real_sol_reserves",
+		name: "PoolMigrationFeeShouldBeLessThanFinalRealSolReserves",
+	}
+	ErrPoolMigrationFeeShouldBeGreaterThanCreatorFeePlusMaxMigrateFees = &customErrorDef{
+		code: 6016,
+		msg:  "pool_migration_fee should be greater than creator_fee + MAX_MIGRATE_FEES",
+		name: "PoolMigrationFeeShouldBeGreaterThanCreatorFeePlusMaxMigrateFees",
+	}
+	ErrDisabledWithdraw = &customErrorDef{
+		code: 6017,
+		msg:  "Migrate instruction is disabled",
+		name: "DisabledWithdraw",
+	}
+	ErrDisabledMigrate = &customErrorDef{
+		code: 6018,
+		msg:  "Migrate instruction is disabled",
+		name: "DisabledMigrate",
+	}
+	ErrInvalidCreator = &customErrorDef{
+		code: 6019,
+		msg:  "Invalid creator pubkey",
+		name: "InvalidCreator",
+	}
+	ErrBuyZeroAmount = &customErrorDef{
+		code: 6020,
+		msg:  "Buy zero amount",
+		name: "BuyZeroAmount",
+	}
+	ErrNotEnoughTokensToBuy = &customErrorDef{
+		code: 6021,
+		msg:  "Not enough tokens to buy",
+		name: "NotEnoughTokensToBuy",
+	}
+	ErrSellZeroAmount = &customErrorDef{
+		code: 6022,
+		msg:  "Sell zero amount",
+		name: "SellZeroAmount",
+	}
+	ErrNotEnoughTokensToSell = &customErrorDef{
+		code: 6023,
+		msg:  "Not enough tokens to sell",
+		name: "NotEnoughTokensToSell",
+	}
+	ErrOverflow = &customErrorDef{
+		code: 6024,
+		msg:  "Overflow",
+		name: "Overflow",
+	}
+	ErrTruncation = &customErrorDef{
+		code: 6025,
+		msg:  "Truncation",
+		name: "Truncation",
+	}
+	ErrDivisionByZero = &customErrorDef{
+		code: 6026,
+		msg:  "Division by zero",
+		name: "DivisionByZero",
+	}
+	ErrNotEnoughRemainingAccounts = &customErrorDef{
+		code: 6027,
+		msg:  "Not enough remaining accounts",
+		name: "NotEnoughRemainingAccounts",
+	}
+	ErrAllFeeRecipientsShouldBeNonZero = &customErrorDef{
+		code: 6028,
+		msg:  "All fee recipients should be non-zero",
+		name: "AllFeeRecipientsShouldBeNonZero",
+	}
+	ErrUnsortedNotUniqueFeeRecipients = &customErrorDef{
+		code: 6029,
+		msg:  "Unsorted or not unique fee recipients",
+		name: "UnsortedNotUniqueFeeRecipients",
+	}
+	ErrCreatorShouldNotBeZero = &customErrorDef{
+		code: 6030,
+		msg:  "Creator should not be zero",
+		name: "CreatorShouldNotBeZero",
+	}
 	Errors = map[int]CustomError{
 		6000: ErrNotAuthorized,
 		6001: ErrAlreadyInitialized,
@@ -71,6 +181,28 @@ var (
 		6006: ErrBondingCurveNotComplete,
 		6007: ErrNotInitialized,
 		6008: ErrWithdrawTooFrequent,
+		6009: ErrNewSizeShouldBeGreaterThanCurrentSize,
+		6010: ErrAccountTypeNotSupported,
+		6011: ErrInitialRealTokenReservesShouldBeLessThanTokenTotalSupply,
+		6012: ErrInitialVirtualTokenReservesShouldBeGreaterThanInitialRealTokenReserves,
+		6013: ErrFeeBasisPointsGreaterThanMaximum,
+		6014: ErrAllZerosWithdrawAuthority,
+		6015: ErrPoolMigrationFeeShouldBeLessThanFinalRealSolReserves,
+		6016: ErrPoolMigrationFeeShouldBeGreaterThanCreatorFeePlusMaxMigrateFees,
+		6017: ErrDisabledWithdraw,
+		6018: ErrDisabledMigrate,
+		6019: ErrInvalidCreator,
+		6020: ErrBuyZeroAmount,
+		6021: ErrNotEnoughTokensToBuy,
+		6022: ErrSellZeroAmount,
+		6023: ErrNotEnoughTokensToSell,
+		6024: ErrOverflow,
+		6025: ErrTruncation,
+		6026: ErrDivisionByZero,
+		6027: ErrNotEnoughRemainingAccounts,
+		6028: ErrAllFeeRecipientsShouldBeNonZero,
+		6029: ErrUnsortedNotUniqueFeeRecipients,
+		6030: ErrCreatorShouldNotBeZero,
 	}
 )
 

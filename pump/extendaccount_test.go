@@ -10,18 +10,18 @@ import (
 	"testing"
 )
 
-func TestEncodeDecode_SetParams(t *testing.T) {
+func TestEncodeDecode_ExtendAccount(t *testing.T) {
 	fu := ag_gofuzz.New().NilChance(0)
 	for i := 0; i < 1; i++ {
-		t.Run("SetParams"+strconv.Itoa(i), func(t *testing.T) {
+		t.Run("ExtendAccount"+strconv.Itoa(i), func(t *testing.T) {
 			{
-				params := new(SetParamsInstruction)
+				params := new(ExtendAccountInstruction)
 				fu.Fuzz(params)
 				params.AccountMetaSlice = nil
 				buf := new(bytes.Buffer)
 				err := encodeT(*params, buf)
 				ag_require.NoError(t, err)
-				got := new(SetParamsInstruction)
+				got := new(ExtendAccountInstruction)
 				err = decodeT(got, buf.Bytes())
 				got.AccountMetaSlice = nil
 				ag_require.NoError(t, err)
